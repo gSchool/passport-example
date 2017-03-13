@@ -50,8 +50,13 @@ function addUser (username, password)
   return true
 }
 
+function getAll () {
+  return users.slice()
+}
+
 module.exports = {
   find: findUser,
   authenticate: authenticateUser,
-  add: addUser
+  add: addUser,
+  getAll: getAll,
 }

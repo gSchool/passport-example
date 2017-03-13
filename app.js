@@ -1,63 +1,61 @@
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var express = require('express')
+var path = require('path')
+var logger = require('morgan')
+var bodyParser = require('body-parser')
+
+// Required for user to stay logged in
+var cookieParser = require('cookie-parser')
 // Passport's sessions requires express-session to work
-var session = require('express-session');
+var session = require('express-session')
 // Require passport from our passport file
-var passport = require('./passport');
+var passport = require('./passport')
 
-var routes = require('./routes/index');
+var staticRoutes = require('./routes/static')
+var apiRoutes = require('./routes/api')
 
-var app = express();
-
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
+var PORT = process.env.PORT || 8080
+var app = express()
 
 // THE ORDER OF THESE MIDDLEWARE MATTER
 // cookieParser, bodyParser, and session need to come before passport
 // cookieParser needs to come before session
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(logger('dev'))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// Enable cookie parsing
+app.use(cookieParser())
+
 // Configure express session
 app.use(session({
   secret: 'keyboard cat',
   saveUninitialized: true,
   resave: false
-}));
+}))
 // Mount Passport middleware onto Express
-app.use(passport.initialize());
+app.use(passport.initialize())
 // Mount Passport session middleware onto Express
-app.use(passport.session());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.session())
 
-app.use('/', routes);
+app.use(staticRoutes)
+app.use('/', apiRoutes)
 
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
+  var err = new Error('Not Found')
+  err.status = 404
+  next(err)
+})
 
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
+  res.status(err.status || 500)
+  res.json({
     message: err.message,
-    error: {}
-  });
-});
+    error: err
+  })
+})
 
-module.exports = app;
+app.listen(PORT, function () {
+  console.log("Listening on port " + PORT + "...")
+})
+
+module.exports = app
