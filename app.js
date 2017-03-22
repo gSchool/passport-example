@@ -10,7 +10,6 @@ var session = require('express-session')
 // Require passport from our passport file
 var passport = require('./passport')
 
-var staticRoutes = require('./routes/static')
 var apiRoutes = require('./routes/api')
 var cors = require("cors")
 
@@ -53,7 +52,6 @@ app.use(function (req, res, next) {
   next()
 })
 
-app.use(staticRoutes)
 app.use('/', apiRoutes)
 
 app.use(function(req, res, next) {
