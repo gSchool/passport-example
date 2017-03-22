@@ -1,6 +1,8 @@
+$.ajaxSetup({xhrFields: { withCredentials: true } });
+
 $(document).on("submit", ".js-loginform", function (event) {
   event.preventDefault()
-  $.post("/login", $(this).serialize())
+  $.post("http://localhost:8080/login", $(this).serialize())
     .then((data) => {
       window.location = "/dashboard.html"
     })
@@ -18,7 +20,7 @@ $(document).on("submit", ".js-loginform", function (event) {
 
 $(document).on("submit", ".js-registerform", function (event) {
   event.preventDefault()
-  $.post("/register", $(this).serialize())
+  $.post("http://localhost:8080/register", $(this).serialize())
     .then((data) => {
       $(".js-error").text("User created")
       $(this)[0].reset()

@@ -1,6 +1,8 @@
+$.ajaxSetup({xhrFields: { withCredentials: true } });
+
 $(document).on("click", ".js-logout", function (event) {
   event.preventDefault()
-  $.get("/logout")
+  $.get("http://localhost:8080/logout")
     .then(function () {
       window.location = "/"
     })
@@ -13,7 +15,7 @@ $(document).on("click", ".js-logout", function (event) {
     })
 })
 
-$.get("/user")
+$.get("http://localhost:8080/user")
   .then(function (data) {
     $(".js-user").text(JSON.stringify(data))
     renderUsers()
@@ -23,7 +25,7 @@ $.get("/user")
   })
 
 function renderUsers () {
-  $.get("/users")
+  $.get("http://localhost:8080/users")
     .then(function (users) {
       users.forEach((user) => {
         $(".js-userlist").append(`<li>${user.username}</li>`)
